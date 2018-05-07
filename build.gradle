@@ -1,0 +1,107 @@
+
+apply plugin: 'application'
+apply plugin: 'groovy'
+
+mainClassName = "javaapplication3.Test"
+
+ext {
+    appName = project.name
+    testServerHttpPort = 9080
+    testServerHttpsPort = 9443
+    warContext = appName
+}
+
+// Define an extra property
+//ext.srcDirName = 'src/javaapplication3'
+
+// Set Java source directory 
+sourceSets {
+    main.java.srcDirs += 'src/javaapplication3'
+}
+
+repositories { 
+    mavenCentral() 
+
+    //Define Local Repositiores here
+    maven {
+	url "C:\\maven\\repository"
+    }
+}
+
+jar {
+    baseName = 'gs-gradle'
+    version =  '0.1.0'
+}
+
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
+
+dependencies {
+    compile "joda-time:joda-time:2.2"
+    compile 'org.codehaus.groovy:groovy-all:2.4.5'
+    testCompile "junit:junit:4.12"
+}
+
+println testServerHttpPort
+println build1
+println localenv
+println rootProject.properties['testBatchs.dir']
+
+task generateDocs {
+    group = 'Documentation'
+    description = 'Generates the HTML documentation for this project.'
+    doLast {
+        // action implementation
+    }
+}
+
+
+task aclean {
+    doLast {
+        println 'Default Cleaning'
+    }
+}
+
+task loadcommentsjmsqueue {
+    doLast {
+        println "Load FidelityAddCommentMessage to JMSQueue"
+	println "Depends on compile-all-jar,pkg-all-appClient-ear,set-container-class-path"
+	println "Need to run Java launch Client and set run time argument"
+    }
+}
+
+task generatemockdirs {
+    doLast {
+        println "Make dir for WS Mock and WS Logger"
+  	println "<echo Generate all mock folders />"
+  	println "<mkdir dir=${mock.webservie.dir}/>"
+  	println "<mkdir dir=${mock.webservie.logger.dir}/>"
+    }
+}
+
+class CustomTask extends DefaultTask {
+    @InputDirectory
+    @Optional
+    File inputDir = project.file("scripts/bdeaa")
+    
+    @OutputFile
+    File outputFile = new File(temporaryDir, "output.txt")
+
+    @TaskAction
+    void generate() {
+       outputFile.text = "done"
+    }
+}
+
+task customTask(type: CustomTask)
+
+def targetPath = file("C:\\TestWorkSpace\\TestLocale\\scripts\\bde").listFiles()
+
+task verifyTargetPath {
+    doLast {
+    
+        if (!targetPath.exists()) {
+            throw new GradleException("Target path not valid!")
+        }
+    }
+}
